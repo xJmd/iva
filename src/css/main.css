@@ -1,0 +1,73 @@
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #b1ccf3;
+  color: #333;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1 {
+    font-size: 2.5em;
+}
+  
+.gradient-text {
+  background-image: linear-gradient(to right, #8b54bb, #1e7aca);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+h2 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+h3 {
+    font-size: 1rem;
+    color: #5a6977;
+}
+#start-button {
+  background-color: #79bdd8;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.2em;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+#start-button:hover {
+  background-color: #439abd;
+}
+#command-history {
+  margin-top: 30px;
+  width: 100%;
+  max-width: 600px;
+  height: 300px; /* Set a fixed height for the chat box */
+  overflow-y: auto; /* Enable vertical scrolling */
+  border: 2px solid #ecf0f1; /* Add a border */
+  border-radius: 5px; /* Add border radius */
+  padding: 10px; /* Add padding */
+}
+.history-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 15px;
+  background-color: #b1ccf3;
+  border-bottom: 1px solid #ecf0f1;
+  transition: background-color 0.3s;
+}
+.history-item:nth-child(even) {
+  background-color: #b1ccf3;;
+}
+.history-item:hover {
+  background-color: #89b5f1;;
+}
+.history-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+.history-item .message {
+  max-width: 500px;
+  word-wrap: break-word;
+}

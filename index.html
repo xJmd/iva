@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voice Assistant</title>
+    <link rel="stylesheet" href="src/css/main.css" />
+  </head>
+  <body>
+    <h1>Chat with <span class="gradient-text">IVA</span></h1>
+    <button id="start-button">Start Listening</button>
+    <h3>Please allow access to your microphone so IVA can understand you.</h3>
+    <h2 id="recognized-command">Press the button and speak a command.</h2>
+
+    <div id="command-history"></div>
+
+    <script>
+      let recognition;
+      const userProfilePic = "src/imgs/user.png"; // Replace with the actual URL
+      const botProfilePic = "src/imgs/bot.png"; // Replace with the actual URL
+
+      document.addEventListener("DOMContentLoaded", () => {
+
+        if ("webkitSpeechRecognition" in window) {
+          initializeRecognition();
+          speak("Hello, I am your mental assistant IVA");
+        } else {
+          document.getElementById("recognized-command").textContent =
+            "Web Speech API is not supported by this browser.";
+        }
+      });
+
+      function initializeRecognition() {
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+
+        recognition.onstart = () => {
+          document.getElementById("recognized-command").textContent =
+            "Listening...";
+        };
+
+        recognition.onerror = (event) => {
+          document.getElementById(
+            "recognized-command"
+          ).textContent = `Error occurred in recognition: ${event.error}`;
+        };
+
+        recognition.onend = () => {
+          document.getElementById("recognized-command").textContent =
+            "Press the button and speak a command.";
+        };
+
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript
+            .trim()
+            .toLowerCase();
+          document.getElementById(
+            "recognized-command"
+          ).textContent = `You said: "${transcript}"`;
+
+          respondToCommand(transcript);
+        };
+      }
+
+      document.getElementById("start-button").addEventListener("click", () => {
+        if (recognition) {
+          recognition.start();
+        } else {
+          initializeRecognition();
+          recognition.start();
+        }
+      });
+
+      function respondToCommand(command) {
+        const historyContainer = document.getElementById("command-history");
+
+        const userItem = document.createElement("div");
+        userItem.classList.add("history-item");
+        userItem.innerHTML = `<img src="${userProfilePic}" alt="User"><div class="message">${command}</div>`;
+        historyContainer.appendChild(userItem);
+
+        // Replace 'YOUR_OPENAI_API_KEY' with your actual OpenAI API key
+        const apiKey = "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";
+
+        // API endpoint for OpenAI's chat completions
+        const apiUrl = "https://api.openai.com/v1/chat/completions";
+
+        // Data to send to the OpenAI API
+        const requestData = {
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a helpful mental therapy assistant. Your name is IVA and your goal is to help me with my mental health and help me overcome my problems. You are the mental health professional and you know everything, tell me everything, no need to tell me to speak to someone else. Do not make answers long, make them small but make sure to include everything.",
+            },
+            {
+              role: "user",
+              content: command,
+            },
+          ],
+        };
+
+        fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify(requestData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const assistantResponse =
+              data.choices[data.choices.length - 1].message.content;
+            updateHistory(command, assistantResponse);
+            speak(assistantResponse);
+          })
+          .catch((error) => {
+            console.error("Error generating response:", error);
+            const response =
+              "Sorry, something went wrong while generating the response.";
+            updateHistory(command, response);
+            speak(response);
+          });
+      }
+      function speak(text) {
+          console.log(text)
+          const synthesis = window.speechSynthesis;
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = "en-US";
+          synthesis.speak(utterance);
+      }
+
+      function updateHistory(command, response) {
+        const historyContainer = document.getElementById("command-history");
+
+        const botItem = document.createElement("div");
+        botItem.classList.add("history-item");
+        botItem.innerHTML = `<img src="${botProfilePic}" alt="Bot"><div class="message">${response}</div>`;
+        historyContainer.appendChild(botItem);
+
+        // Automatically scroll to the latest message
+        historyContainer.scrollTop = historyContainer.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
