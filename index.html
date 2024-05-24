@@ -1,157 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Voice Assistant</title>
     <link rel="stylesheet" href="src/css/main.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
- 
-  </head>
-  <body>
-
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+</head>
+<body>
+    <video autoplay muted loop id="myVideo">
+      <source src="ocean.mp4" type="video/mp4">
+    </video>
     <h1>Chat with <span class="gradient-text">IVA</span></h1>
-    <div style="cursor: pointer;"class="loader" id="start-button">
-      <span></span>
-      <i id='microphone' class="fas fa-microphone"></i>
+    <div style="cursor: pointer" class="loader" id="start-button">
+        <span></span>
+        <i id="microphone" class="fas fa-microphone"></i>
     </div>
-    <h2 id="recognized-command">Press the button and speak a command.</h2>
+    <h2 style="color: black;" id="recognized-command">Press the button and speak a command.</h2>
+    <div class="messageBox">
+        <input
+          required=""
+          placeholder="Or type your question manually"
+          type="text"
+          id="messageInput"
+        />
+        <button id="sendButton">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 664 663"
+            >
+                <path
+                  fill="none"
+                  d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
+                ></path>
+                <path
+                  stroke-linejoin="round"
+                  stroke-linecap="round"
+                  stroke-width="33.67"
+                  stroke="#6c6c6c"
+                  d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
+                ></path>
+            </svg>
+        </button>
+    </div>
 
     <div id="command-history"></div>
+    <h3 id="power">
+        Powered by <span class="gradient-text">Apexecare AI</span>
+    </h3>
 
     <script>
-      let recognition;
-      const userProfilePic = "src/imgs/user.png"; // Replace with the actual URL
-      const botProfilePic = "src/imgs/bot.png"; // Replace with the actual URL
+        let recognition;
+        const userProfilePic = "src/imgs/user.png"; // Replace with the actual URL
+        const botProfilePic = "src/imgs/bot.png"; // Replace with the actual URL
 
-      document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", () => {
+            if ("webkitSpeechRecognition" in window) {
+                initializeRecognition();
+                speak("Hello, I am your mental assistant IVA");
+            } else {
+                document.getElementById("recognized-command").textContent =
+                    "Web Speech API is not supported by this browser.";
+            }
+        });
 
-        if ("webkitSpeechRecognition" in window) {
-          initializeRecognition();
-          speak("Hello, I am your mental assistant IVA");
-        } else {
-          document.getElementById("recognized-command").textContent =
-            "Web Speech API is not supported by this browser.";
+        function initializeRecognition() {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = "en-US";
+
+            recognition.onstart = () => {
+                document.getElementById("recognized-command").textContent =
+                    "Listening...";
+                document.querySelector("#microphone").style = "color: #f08989;";
+            };
+
+            recognition.onerror = (event) => {
+                document.getElementById(
+                    "recognized-command"
+                ).textContent = `Error occurred in recognition: ${event.error}`;
+            };
+
+            recognition.onend = () => {
+                document.getElementById("recognized-command").textContent =
+                    "Press the button and speak a command.";
+                document.querySelector("#microphone").style = "color: black;";
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript
+                    .trim()
+                    .toLowerCase();
+                document.getElementById(
+                    "recognized-command"
+                ).textContent = `You said: "${transcript}"`;
+
+                respondToCommand(transcript);
+            };
         }
-      });
 
-      function initializeRecognition() {
-        recognition = new webkitSpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = "en-US";
+        document.getElementById("start-button").addEventListener("click", () => {
+            if (recognition) {
+                recognition.start();
+            } else {
+                initializeRecognition();
+                recognition.start();
+            }
+        });
 
-        recognition.onstart = () => {
-          document.getElementById("recognized-command").textContent =
-            "Listening...";
-          document.querySelector("#microphone").style = 'color: #f08989;'
-        };
+        // Event listener for the send button
+        document.getElementById("sendButton").addEventListener("click", () => {
+            const messageInput = document.getElementById("messageInput");
+            const message = messageInput.value.trim();
+            if (message) {
+                respondToCommand(message);
+                messageInput.value = ""; // Clear the input field after sending the message
+            }
+        });
 
-        recognition.onerror = (event) => {
-          document.getElementById(
-            "recognized-command"
-          ).textContent = `Error occurred in recognition: ${event.error}`;
-        };
+        // Event listener for the Enter key in the input field
+        document.getElementById("messageInput").addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                const messageInput = document.getElementById("messageInput");
+                const message = messageInput.value.trim();
+                if (message) {
+                    respondToCommand(message);
+                    messageInput.value = ""; // Clear the input field after sending the message
+                }
+            }
+        });
 
-        recognition.onend = () => {
-          document.getElementById("recognized-command").textContent =
-            "Press the button and speak a command.";
-          document.querySelector("#microphone").style = 'color: white;'
-        };
+        function respondToCommand(command) {
+            const historyContainer = document.getElementById("command-history");
 
-        recognition.onresult = (event) => {
-          const transcript = event.results[0][0].transcript
-            .trim()
-            .toLowerCase();
-          document.getElementById(
-            "recognized-command"
-          ).textContent = `You said: "${transcript}"`;
+            const userItem = document.createElement("div");
+            userItem.classList.add("history-item");
+            userItem.innerHTML = `<img src="${userProfilePic}" alt="User"><div class="message">${command}</div>`;
+            historyContainer.appendChild(userItem);
 
-          respondToCommand(transcript);
-        };
-      }
+            // Replace 'YOUR_OPENAI_API_KEY' with your actual OpenAI API key
+            const apiKey = "";
 
-      document.getElementById("start-button").addEventListener("click", () => {
-        if (recognition) {
-          recognition.start();
-        } else {
-          initializeRecognition();
-          recognition.start();
+            // API endpoint for OpenAI's chat completions
+            const apiUrl = "https://api.openai.com/v1/chat/completions";
+
+            // Data to send to the OpenAI API
+            const requestData = {
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content:
+                            "Answer in maximum 2-3 sentences. You are a helpful mental therapy assistant. Your name is IVA and your goal is to help me with my mental health and help me overcome my problems. You are the mental health professional and you know everything, you work for a company named Apexecare and you are a very important AI that helps people with their mental problems. Apexecare was founded in 2024 by a team of dedicated developers. tell me everything, no need to tell me to speak to someone else. Do not make answers long, make them small but make sure to include everything.",
+                    },
+                    {
+                        role: "user",
+                        content: command,
+                    },
+                ],
+            };
+
+            fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify(requestData),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    const assistantResponse =
+                        data.choices[data.choices.length - 1].message.content;
+                    updateHistory(command, assistantResponse);
+                    speak(assistantResponse);
+                })
+                .catch((error) => {
+                    console.error("Error generating response:", error);
+                    const response =
+                        "Sorry, something went wrong while generating the response.";
+                    updateHistory(command, response);
+                    speak(response);
+                });
         }
-      });
 
-      function respondToCommand(command) {
-        const historyContainer = document.getElementById("command-history");
+        function speak(text) {
+            console.log(text);
+            const synthesis = window.speechSynthesis;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = "en-US";
+            synthesis.speak(utterance);
+        }
 
-        const userItem = document.createElement("div");
-        userItem.classList.add("history-item");
-        userItem.innerHTML = `<img src="${userProfilePic}" alt="User"><div class="message">${command}</div>`;
-        historyContainer.appendChild(userItem);
+        function updateHistory(command, response) {
+            const historyContainer = document.getElementById("command-history");
 
-        // Replace 'YOUR_OPENAI_API_KEY' with your actual OpenAI API key
-        const apiKey = "KEY_HERE";
+            const botItem = document.createElement("div");
+            botItem.classList.add("history-item");
+            botItem.innerHTML = `<img src="${botProfilePic}" alt="Bot"><div class="message">${response}</div>`;
+            historyContainer.appendChild(botItem);
 
-        // API endpoint for OpenAI's chat completions
-        const apiUrl = "https://api.openai.com/v1/chat/completions";
-
-        // Data to send to the OpenAI API
-        const requestData = {
-          model: "gpt-3.5-turbo",
-          messages: [
-            {
-              role: "system",
-              content:
-                "Answer in maximum 2-3 sentences. You are a helpful mental therapy assistant. Your name is IVA and your goal is to help me with my mental health and help me overcome my problems. You are the mental health professional and you know everything, tell me everything, no need to tell me to speak to someone else. Do not make answers long, make them small but make sure to include everything.",
-            },
-            {
-              role: "user",
-              content: command,
-            },
-          ],
-        };
-
-        fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify(requestData),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            const assistantResponse =
-              data.choices[data.choices.length - 1].message.content;
-            updateHistory(command, assistantResponse);
-            speak(assistantResponse);
-          })
-          .catch((error) => {
-            console.error("Error generating response:", error);
-            const response =
-              "Sorry, something went wrong while generating the response.";
-            updateHistory(command, response);
-            speak(response);
-          });
-      }
-      function speak(text) {
-          console.log(text)
-          const synthesis = window.speechSynthesis;
-          const utterance = new SpeechSynthesisUtterance(text);
-          utterance.lang = "en-US";
-          synthesis.speak(utterance);
-      }
-
-      function updateHistory(command, response) {
-        const historyContainer = document.getElementById("command-history");
-
-        const botItem = document.createElement("div");
-        botItem.classList.add("history-item");
-        botItem.innerHTML = `<img src="${botProfilePic}" alt="Bot"><div class="message">${response}</div>`;
-        historyContainer.appendChild(botItem);
-
-        // Automatically scroll to the latest message
-        historyContainer.scrollTop = historyContainer.scrollHeight;
-      }
+            // Automatically scroll to the latest message
+            historyContainer.scrollTop = historyContainer.scrollHeight;
+        }
     </script>
-  </body>
+</body>
 </html>

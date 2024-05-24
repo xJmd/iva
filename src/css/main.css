@@ -1,61 +1,71 @@
-
 body {
   font-family: 'Helvetica Neue', Arial, sans-serif;
-  background-color: black;
-  color: #ffffff;
+  background-image: 'ocean.jpg'; /* Replace with your ocean background image URL */
+  background-size: cover;
+  color: #000000;
   margin: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 h1 {
-    font-size: 2.5em;
-}
+  font-size: 2.5em;
   
+}
+
 .gradient-text {
   background-image: linear-gradient(to right, #8b54bb, #1e7aca);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 h2 {
   font-size: 1.5em;
-  color: #bbbbcc;
+  color: #333333;
 }
+
 h3 {
-    font-size: 1rem;
-    color: #bbbbcc;
+  font-size: 1rem;
+  color: #333333;
 }
 
 #command-history {
   margin-top: 30px;
   width: 100%;
   max-width: 600px;
-  height: 300px; /* Set a fixed height for the chat box */
-  overflow-y: auto; /* Enable vertical scrolling */
-  border: 2px solid #ecf0f1; /* Add a border */
-  border-radius: 5px; /* Add border radius */
-  padding: 10px; /* Add padding */
+  height: 300px;
+  overflow-y: auto;
+  border: 2px solid #cccccc;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
 }
+
 .history-item {
   display: flex;
   align-items: flex-start;
   padding: 15px;
-  background-color: #000000;
-  border-bottom: 1px solid #bbbbcc;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid #cccccc;
   transition: background-color 0.3s;
 }
+
 .history-item:nth-child(even) {
-  background-color: #000000;;
+  background-color: rgba(255, 255, 255, 0.8);
 }
+
 .history-item:hover {
-  background-color: #9c9c9c;;
+  background-color: #eeeeee;
 }
+
 .history-item img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   margin-right: 15px;
 }
+
 .history-item .message {
   max-width: 500px;
   word-wrap: break-word;
@@ -65,7 +75,7 @@ h3 {
   position: relative;
   width: 160px;
   height: 160px;
-  border: 4px solid #282828;
+  border: 4px solid #cccccc;
   overflow: hidden;
   border-radius: 50%;
   box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.1),
@@ -82,9 +92,9 @@ h3 {
   right: 25px;
   bottom: 25px;
   z-index: 10;
-  background: #212121;
+  background: #ffffff;
   border-radius: 50%;
-  border: 2px solid #292929;
+  border: 2px solid #cccccc;
   box-shadow: inset -2px -2px 5px rgba(255, 255, 255, 0.2),
               inset 3px 3px 5px rgba(0, 0, 0, 0.5);
 }
@@ -119,8 +129,143 @@ h3 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #fff;
-  font-size: 48px; /* Adjust size as needed */
+  color: #ffffff;
+  font-size: 48px;
   z-index: 20;
 }
 
+.messageBox {
+  width: fit-content;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  padding: 0 15px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+}
+
+.messageBox:focus-within {
+  border: 1px solid #888888;
+}
+
+.fileUploadWrapper {
+  width: fit-content;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#file {
+  display: none;
+}
+
+.fileUploadWrapper label {
+  cursor: pointer;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.fileUploadWrapper label svg {
+  height: 18px;
+}
+
+.fileUploadWrapper label svg path {
+  transition: all 0.3s;
+}
+
+.fileUploadWrapper label svg circle {
+  transition: all 0.3s;
+}
+
+.fileUploadWrapper label:hover svg path {
+  stroke: #ffffff;
+}
+
+.fileUploadWrapper label:hover svg circle {
+  stroke: #ffffff;
+  fill: #cccccc;
+}
+
+.fileUploadWrapper label:hover .tooltip {
+  display: block;
+  opacity: 1;
+}
+
+.tooltip {
+  position: absolute;
+  top: -40px;
+  display: none;
+  opacity: 0;
+  color: #000000;
+  font-size: 10px;
+  background-color: #ffffff;
+  padding: 6px 10px;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s;
+}
+
+#messageInput {
+  width: 300px;
+  height: 150%;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  padding-left: 10px;
+  color: #000000;
+}
+
+#messageInput:focus ~ #sendButton svg path,
+#messageInput:valid ~ #sendButton svg path {
+  fill: #cccccc;
+  stroke: #000000;
+}
+
+#sendButton {
+  width: fit-content;
+  height: 100%;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+#sendButton svg {
+  height: 18px;
+  transition: all 0.3s;
+}
+
+#sendButton svg path {
+  transition: all 0.3s;
+}
+
+#sendButton:hover svg path {
+  fill: #cccccc;
+  stroke: #000000;
+}
+
+#microphone{
+  color: black;
+}
+
+#myVideo {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  z-index: -1;
+}
