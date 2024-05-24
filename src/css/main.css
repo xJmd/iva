@@ -1,8 +1,8 @@
 
 body {
   font-family: 'Helvetica Neue', Arial, sans-serif;
-  background-color: #b1ccf3;
-  color: #333;
+  background-color: black;
+  color: #ffffff;
   margin: 20px;
   display: flex;
   flex-direction: column;
@@ -19,24 +19,13 @@ h1 {
 }
 h2 {
   font-size: 1.5em;
-  color: #34495e;
+  color: #bbbbcc;
 }
 h3 {
     font-size: 1rem;
-    color: #5a6977;
+    color: #bbbbcc;
 }
-#start-button {
-  background-color: #79bdd8;
-  border: none;
-  padding: 15px 30px;
-  font-size: 1.2em;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-#start-button:hover {
-  background-color: #439abd;
-}
+
 #command-history {
   margin-top: 30px;
   width: 100%;
@@ -51,15 +40,15 @@ h3 {
   display: flex;
   align-items: flex-start;
   padding: 15px;
-  background-color: #b1ccf3;
-  border-bottom: 1px solid #ecf0f1;
+  background-color: #000000;
+  border-bottom: 1px solid #bbbbcc;
   transition: background-color 0.3s;
 }
 .history-item:nth-child(even) {
-  background-color: #b1ccf3;;
+  background-color: #000000;;
 }
 .history-item:hover {
-  background-color: #89b5f1;;
+  background-color: #9c9c9c;;
 }
 .history-item img {
   width: 40px;
@@ -71,3 +60,67 @@ h3 {
   max-width: 500px;
   word-wrap: break-word;
 }
+
+.loader {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border: 4px solid #282828;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.1),
+              10px 10px 10px rgba(0, 0, 0, 0.4),
+              inset -5px -5px 5px rgba(255, 255, 255, 0.2),
+              inset 10px 10px 10px rgba(0, 0, 0, 0.4);
+}
+
+.loader:before {
+  content: "";
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  right: 25px;
+  bottom: 25px;
+  z-index: 10;
+  background: #212121;
+  border-radius: 50%;
+  border: 2px solid #292929;
+  box-shadow: inset -2px -2px 5px rgba(255, 255, 255, 0.2),
+              inset 3px 3px 5px rgba(0, 0, 0, 0.5);
+}
+
+.loader span {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-image: linear-gradient(
+      -225deg,
+      #8b54bb 0%,
+      #1e7aca 50%,
+      #b94eeb 100%
+  );
+  filter: blur(20px);
+  z-index: -1;
+  animation: animate 0.5s linear infinite;
+}
+
+@keyframes animate {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+}
+
+.loader i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 48px; /* Adjust size as needed */
+  z-index: 20;
+}
+

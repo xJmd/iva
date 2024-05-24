@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Voice Assistant</title>
     <link rel="stylesheet" href="src/css/main.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+ 
   </head>
   <body>
+
     <h1>Chat with <span class="gradient-text">IVA</span></h1>
-    <button id="start-button">Start Listening</button>
-    <h3>Please allow access to your microphone so IVA can understand you.</h3>
+    <div style="cursor: pointer;"class="loader" id="start-button">
+      <span></span>
+      <i id='microphone' class="fas fa-microphone"></i>
+    </div>
     <h2 id="recognized-command">Press the button and speak a command.</h2>
 
     <div id="command-history"></div>
@@ -39,6 +44,7 @@
         recognition.onstart = () => {
           document.getElementById("recognized-command").textContent =
             "Listening...";
+          document.querySelector("#microphone").style = 'color: #f08989;'
         };
 
         recognition.onerror = (event) => {
@@ -50,6 +56,7 @@
         recognition.onend = () => {
           document.getElementById("recognized-command").textContent =
             "Press the button and speak a command.";
+          document.querySelector("#microphone").style = 'color: white;'
         };
 
         recognition.onresult = (event) => {
@@ -82,7 +89,7 @@
         historyContainer.appendChild(userItem);
 
         // Replace 'YOUR_OPENAI_API_KEY' with your actual OpenAI API key
-        const apiKey = "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";
+        const apiKey = "KEY_HERE";
 
         // API endpoint for OpenAI's chat completions
         const apiUrl = "https://api.openai.com/v1/chat/completions";
@@ -94,7 +101,7 @@
             {
               role: "system",
               content:
-                "You are a helpful mental therapy assistant. Your name is IVA and your goal is to help me with my mental health and help me overcome my problems. You are the mental health professional and you know everything, tell me everything, no need to tell me to speak to someone else. Do not make answers long, make them small but make sure to include everything.",
+                "Answer in maximum 2-3 sentences. You are a helpful mental therapy assistant. Your name is IVA and your goal is to help me with my mental health and help me overcome my problems. You are the mental health professional and you know everything, tell me everything, no need to tell me to speak to someone else. Do not make answers long, make them small but make sure to include everything.",
             },
             {
               role: "user",
